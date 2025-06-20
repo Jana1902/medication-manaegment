@@ -11,48 +11,107 @@ const Register = () => {
 
   const [isError, setIsError] = useState(false);
   const [errType, setErrType] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [serverError, setServerError] = useState("");
 
   const navigate = useNavigate();
 
-  const onRegister = (event) => {
+  const onRegister = async (event) => {
     event.preventDefault();
+    setServerError("");
 
     if (!username || !password1 || !password2) {
       setIsError(true);
       setErrType("empty");
-    } else if (password1 !== password2) {
+      return;
+    }
+
+    if (password1 !== password2) {
       setIsError(true);
       setErrType("match");
-    } else if (password1.length < 8) {
+      return;
+    }
+
+    if (password1.length < 8) {
       setIsError(true);
       setErrType("length");
-    } else {
-      setIsError(false);
-      setErrType("");
+      return;
+    }
+
+    setIsError(false);
+    setErrType("");
+    setLoading(true);
+
+    const success = await saveUserdetails();
+
+    setLoading(false);
+
+    if (success) {
       alert(`Registered as ${personType}!`);
       navigate("/login");
     }
   };
 
-  const renderError = () => {
-    if (!isError) return null;
+  const saveUserdetails = async () => {
+    const userDetails = {
+      username,
+      password: password1,
+      type: personType,
+      code: personType === "caretaker" ? "CARETAKER980" : "",
+    };
 
-    switch (errType) {
-      case "empty":
-        return (
-          <p className="error-msg">*Username or Password should not be empty</p>
-        );
-      case "length":
-        return (
-          <p className="error-msg">
-            *Password must contain at least 8 characters
-          </p>
-        );
-      case "match":
-        return <p className="error-msg">*Passwords do not match</p>;
-      default:
-        return null;
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userDetails),
+    };
+
+    try {
+      const res = await fetch(
+        "https://medication-api-b2jz.onrender.com/register",
+        options
+      );
+      console.log(res);
+      const text = await res.text();
+      if (res.ok) return true;
+      setServerError(text || "Registration failed");
+      return false;
+    } catch (err) {
+      console.error(err);
+      setServerError("Server error. Please try again later.");
+      return false;
     }
+  };
+
+  const renderError = () => {
+    if (isError) {
+      switch (errType) {
+        case "empty":
+          return (
+            <p className="error-msg">
+              *Username or Password should not be empty
+            </p>
+          );
+        case "length":
+          return (
+            <p className="error-msg">
+              *Password must contain at least 8 characters
+            </p>
+          );
+        case "match":
+          return <p className="error-msg">*Passwords do not match</p>;
+        default:
+          return null;
+      }
+    }
+
+    if (serverError) {
+      return <p className="error-msg">*{serverError}</p>;
+    }
+
+    return null;
   };
 
   return (
@@ -129,7 +188,10 @@ const Register = () => {
             </div>
           </div>
 
-          <button type="submit">Register</button>
+          <button type="submit" disabled={loading}>
+            {loading ? "Registering..." : "Register"}
+          </button>
+
           <div className="error-container">{renderError()}</div>
         </form>
       </div>
