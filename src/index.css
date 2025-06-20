@@ -11,3 +11,8 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+*{
+  font-family: "DM Sans", serif;
+  box-sizing: border-box;
+}

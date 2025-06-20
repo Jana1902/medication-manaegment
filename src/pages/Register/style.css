@@ -1,0 +1,144 @@
+.login-container{
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /* background:linear-gradient(to bottom right,  #8268CA, #B4A5DF ) ; */
+}
+
+.login-sub-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-radius: 8px;
+    box-shadow: 0 0 8px 0px #200931;
+    padding: 20px;
+}
+
+.login-card, .login-card img{
+    height: 500px;
+    width: 500px;
+}
+
+form{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 30px;
+    color: #230C33;
+}
+
+form h1{
+    margin-bottom: 15px;;
+}
+
+label{
+    font-size: 12px;
+    font-weight: 500;
+    color: #230C33;
+    margin-bottom: 1px;
+}
+
+input{
+    width: 240px;
+    height: 35px;
+    background: transparent;
+    border: 1px solid #230C33;
+    border-radius: 5px;
+    padding: 0 10px;
+    outline: none;
+    margin-bottom: 10px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+input:active{
+    outline: none;
+}
+
+input:checked{
+    accent-color: #200931;
+}
+
+button{
+    width: 240px;
+    height: 35px;
+    background: #230C33;
+    border: 1px solid #230C33;
+    color: white;
+    border-radius: 5px;
+    padding: 0 10px;
+    outline: none;
+    margin: 10px 0;
+}
+
+/* #password{
+    margin-bottom: 2px;
+} */
+
+#showPassword{
+    width: 14px;
+    height: 14px;
+    margin: 0;
+    margin-right: 3px;
+}
+
+.show-password{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 25px;
+    margin-bottom: 6px;
+}
+
+.show-text{
+    margin: 0;
+}
+
+.signup-info{
+    font-size: 14px;
+    align-self: center;
+}
+
+.signup-info span{
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+.error-container{
+    height: 20px;
+}
+
+.error-msg{
+    color: rgb(231, 66, 66);
+    font-size: 12px;
+    font-weight: 500;
+    margin: 0px;
+    width: 240px;
+    align-self: center;
+}
+
+.radioBtn{
+    width: 14px;
+    height: 14px;
+    margin-top: 8px;
+    margin-left: 0;
+}
+
+.radioCard{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 20px;
+    margin-right: 10px;
+}
+
+.radioCard label{
+    font-size: 14px;
+}
+
+.radio-btn-group{
+    display: flex;
+    align-items: center;
+}
