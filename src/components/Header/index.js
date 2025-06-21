@@ -1,12 +1,18 @@
+import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import "./style.css";
 
 const Header = () => {
-  const handleLogout = props => {
-    const {history} = props
-    history.replace('/login')
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
     localStorage.removeItem("jwtToken");
-    Cookies.remove('jwtToken')
+    localStorage.removeItem("username");
+    localStorage.removeItem("userid");
+    localStorage.removeItem("type");
+    Cookies.remove("jwtToken");
+
+    navigate("/login", { replace: true });
   };
 
   return (
