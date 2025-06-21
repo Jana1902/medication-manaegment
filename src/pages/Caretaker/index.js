@@ -25,6 +25,7 @@ const Caretaker = () => {
 
   const caretakerName = localStorage.getItem("username");
   const caretakerId = localStorage.getItem("userid");
+  const jwtToken = localStorage.getItem("jwtToken");
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -40,13 +41,12 @@ const Caretaker = () => {
   }, []);
 
   const fetchDashboardStats = async () => {
-    const token = localStorage.getItem("jwtToken");
     try {
       const res = await fetch(
         `https://medication-api-b2jz.onrender.com/caretaker-dashboard?username=${caretakerName}`,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${jwtToken}`,
           },
         }
       );
@@ -60,7 +60,12 @@ const Caretaker = () => {
   const fetchMedications = async () => {
     try {
       const res = await fetch(
-        `https://medication-api-b2jz.onrender.com/medications?caretaker=${caretakerName}`
+        `https://medication-api-b2jz.onrender.com/medications?caretaker=${caretakerName}`,
+        {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        }
       );
       const data = await res.json();
       setMedications(data);
@@ -72,7 +77,12 @@ const Caretaker = () => {
   const fetchPatients = async () => {
     try {
       const res = await fetch(
-        `https://medication-api-b2jz.onrender.com/patients?caretaker=${caretakerName}`
+        `https://medication-api-b2jz.onrender.com/patients?caretaker=${caretakerName}`,
+        {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        }
       );
       const data = await res.json();
       setPatients(data);
@@ -103,6 +113,7 @@ const Caretaker = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${jwtToken}`,
           },
           body: JSON.stringify(payload),
         }
@@ -136,6 +147,7 @@ const Caretaker = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${jwtToken}`,
           },
           body: JSON.stringify({ ...newPatient, caretakerId }),
         }
