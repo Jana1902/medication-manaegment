@@ -16,6 +16,15 @@ const Caretaker = () => {
   });
   const [showAddModal, setShowAddModal] = useState(false);
   const [newPatient, setNewPatient] = useState({ name: "", password: "" });
+  const [stats, setStats] = useState({
+    patients: 0,
+    medications: 0,
+    taken: 0,
+    pending: 0,
+  });
+
+  const caretakerName = localStorage.getItem("username");
+  const caretakerId = localStorage.getItem("userid");
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -24,13 +33,29 @@ const Caretaker = () => {
     return "Good Evening";
   };
 
-  const caretakerName = localStorage.getItem("username");
-  const caretakerId = localStorage.getItem("userid");
-
   useEffect(() => {
     fetchMedications();
     fetchPatients();
+    fetchDashboardStats();
   }, []);
+
+  const fetchDashboardStats = async () => {
+    const token = localStorage.getItem("jwtToken");
+    try {
+      const res = await fetch(
+        `https://medication-api-b2jz.onrender.com/caretaker-dashboard?username=${caretakerName}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await res.json();
+      setStats(data);
+    } catch (err) {
+      console.error("Failed to fetch dashboard stats", err);
+    }
+  };
 
   const fetchMedications = async () => {
     try {
@@ -86,6 +111,7 @@ const Caretaker = () => {
       if (res.ok) {
         alert("Medication added successfully");
         fetchMedications();
+        fetchDashboardStats();
         setFormData({
           name: "",
           dosage: "",
@@ -104,17 +130,21 @@ const Caretaker = () => {
 
   const handleAddPatient = async () => {
     try {
-      const res = await fetch("https://medication-api-b2jz.onrender.com/add-patient", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ...newPatient, caretakerId }),
-      });
+      const res = await fetch(
+        "https://medication-api-b2jz.onrender.com/add-patient",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ ...newPatient, caretakerId }),
+        }
+      );
 
       if (res.ok) {
         alert("Patient added successfully");
         fetchPatients();
+        fetchDashboardStats();
         setShowAddModal(false);
         setNewPatient({ name: "", password: "" });
       } else {
@@ -146,11 +176,19 @@ const Caretaker = () => {
           <div className="stats-grid">
             <div className="stat-card large">
               <h3>Assigned Patients 🧑‍⚕️</h3>
-              <p><strong>{patients.length}</strong> total</p>
+              <p><strong>{stats.patients}</strong> total</p>
             </div>
             <div className="stat-card large">
               <h3>Medications Added 💊</h3>
-              <p><strong>{medications.length}</strong> total</p>
+              <p><strong>{stats.medications}</strong> total</p>
+            </div>
+            <div className="stat-card large">
+              <h3>Patients Taken Today ✅</h3>
+              <p><strong>{stats.taken}</strong></p>
+            </div>
+            <div className="stat-card large">
+              <h3>Pending Patients ⏳</h3>
+              <p><strong>{stats.pending}</strong></p>
             </div>
           </div>
 
@@ -192,7 +230,7 @@ const Caretaker = () => {
                 name="time"
                 value={formData.time}
                 onChange={handleInputChange}
-                placeholder="Times (e.g., 08:00 AM)"
+                placeholder="Time (e.g., 08:00 AM)"
               />
               <input
                 name="start_date"
@@ -220,13 +258,17 @@ const Caretaker = () => {
               type="text"
               placeholder="Patient Name"
               value={newPatient.name}
-              onChange={(e) => setNewPatient({ ...newPatient, name: e.target.value })}
+              onChange={(e) =>
+                setNewPatient({ ...newPatient, name: e.target.value })
+              }
             />
             <input
               type="password"
               placeholder="Password"
               value={newPatient.password}
-              onChange={(e) => setNewPatient({ ...newPatient, password: e.target.value })}
+              onChange={(e) =>
+                setNewPatient({ ...newPatient, password: e.target.value })
+              }
             />
             <div className="modal-buttons">
               <button onClick={handleAddPatient}>Add</button>
