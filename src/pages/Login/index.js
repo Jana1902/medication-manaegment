@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import cookies from 'js-cookie';
 import "./style.css";
 
 const Login = () => {
@@ -46,7 +47,8 @@ const Login = () => {
         localStorage.setItem("jwtToken", data.jwtToken);
         localStorage.setItem("userid", data.userid);
         localStorage.setItem("type", data.type);
-        navigate(`/dashboard/${data.userid}`);
+        navigate(`/${data.type}/${data.userid}`);
+        cookies.set('jwtToken', data.jwtToken)
       } else {
         setError(data || "Login failed. Please try again.");
       }
