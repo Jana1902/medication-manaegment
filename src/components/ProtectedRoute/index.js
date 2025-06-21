@@ -1,11 +1,9 @@
-// src/components/ProtectedRoute/index.js
-
 import { Navigate } from "react-router-dom";
 
 const ProtectedRoute = ({ children }) => {
-  const jwtToken = localStorage.get("jwtToken");
+  const token = localStorage.getItem("jwtToken");
 
-  if (!jwtToken) {
+  if (!token) {
     return <Navigate to="/login" replace />;
   }
 
