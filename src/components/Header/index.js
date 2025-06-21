@@ -1,8 +1,9 @@
-import './style.css';
+import "./style.css";
 
 const Header = () => {
   const handleLogout = () => {
-    window.location.href = '/login';
+    window.location.href = "/login";
+    localStorage.remove("jwtToken");
   };
 
   return (
