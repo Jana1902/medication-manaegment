@@ -2,7 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import PatientDashboardPage from "./pages/PatientDashboardPage";
-import ProtectedRoute from "./comoponents/ProtectedRoute";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Caretaker from "./pages/Caretaker";
 import "./App.css";
 
