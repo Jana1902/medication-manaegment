@@ -8,7 +8,7 @@ const PatientDashboard = () => {
   const [refills, setRefills] = useState(0);
   const [username, setUsername] = useState("");
   const [medicationForm, setMedicationForm] = useState({
-    id: "",
+    medicationName: "",
     status: "taken",
     notes: "",
   });
@@ -76,9 +76,10 @@ const PatientDashboard = () => {
   const handleMedicationSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("jwtToken");
+
     const payload = {
       username,
-      medication_id: medicationForm.id,
+      medicationName: medicationForm.medicationName,
       status: medicationForm.status,
       notes: medicationForm.notes,
     };
@@ -97,10 +98,12 @@ const PatientDashboard = () => {
       );
 
       if (res.ok) {
-        alert("Medication updated successfully");
-        setMedicationForm({ id: "", status: "taken", notes: "" });
+        alert("Medication status updated successfully");
+        setMedicationForm({ medicationName: "", status: "taken", notes: "" });
       } else {
-        console.error("Failed to update medication");
+        const errRes = await res.json();
+        console.error("Failed to update medication:", errRes);
+        alert(errRes?.error || "Update failed");
       }
     } catch (err) {
       console.error("Server error", err);
@@ -111,36 +114,26 @@ const PatientDashboard = () => {
     <div className="dashboard-container">
       <div className="dashboard-card">
         <div className="dashboard-header">
-          <h2>
-            {getGreeting()}, {username} 👋
-          </h2>
+          <h2>{getGreeting()}, {username} 👋</h2>
           <p className="subtext">Stay on track. Your health matters 💊</p>
         </div>
 
         <div className="stats-grid">
           <div className="stat-card large">
             <h3>Streak 🔥</h3>
-            <p>
-              <strong>{streak}</strong> days
-            </p>
+            <p><strong>{streak}</strong> days</p>
           </div>
           <div className="stat-card large">
             <h3>Today’s Status ✅</h3>
-            <p>
-              <strong>{todayStatus}</strong>
-            </p>
+            <p><strong>{todayStatus}</strong></p>
           </div>
           <div className="stat-card large">
             <h3>Next Dose ⏰</h3>
-            <p>
-              At <strong>{nextDose}</strong>
-            </p>
+            <p>At <strong>{nextDose}</strong></p>
           </div>
           <div className="stat-card large">
             <h3>Refills Needed 🧾</h3>
-            <p>
-              <strong>{refills}</strong> due
-            </p>
+            <p><strong>{refills}</strong> due</p>
           </div>
         </div>
 
@@ -148,14 +141,14 @@ const PatientDashboard = () => {
           <h3>Update Medication</h3>
           <form onSubmit={handleMedicationSubmit} className="medication-form">
             <select
-              name="id"
-              value={medicationForm.id}
+              name="medicationName"
+              value={medicationForm.medicationName}
               onChange={handleFormChange}
               required
             >
               <option value="">Select Medication</option>
               {medications.map((med) => (
-                <option key={med.id} value={med.id}>
+                <option key={med.id} value={med.name}>
                   {med.name}
                 </option>
               ))}
