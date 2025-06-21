@@ -1,15 +1,15 @@
-import { Navigate, Outlet } from "react-router-dom";
-import cookies from "js-cookie";
+// src/components/ProtectedRoute/index.js
 
-const ProtectedRoute = () => {
-  const token = cookies.get("jwtToken") || localStorage.getItem("jwtToken");
+import { Navigate } from "react-router-dom";
 
-  if (!token) {
-    // No token, redirect to login
+const ProtectedRoute = ({ children }) => {
+  const jwtToken = localStorage.get("jwtToken");
+
+  if (!jwtToken) {
     return <Navigate to="/login" replace />;
   }
 
-  return <Outlet />;
+  return children;
 };
 
 export default ProtectedRoute;
