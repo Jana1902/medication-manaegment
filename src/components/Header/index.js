@@ -1,9 +1,11 @@
+import Cookies from "js-cookie";
 import "./style.css";
 
 const Header = () => {
   const handleLogout = () => {
     window.location.href = "/login";
     localStorage.removeItem("jwtToken");
+    Cookies.remove('jwtToken')
   };
 
   return (
