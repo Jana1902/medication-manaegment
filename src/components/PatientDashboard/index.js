@@ -50,7 +50,7 @@ const PatientDashboard = () => {
       const username = localStorage.getItem("username");
       try {
         const res = await fetch(
-          `https://medication-api-b2jz.onrender.com/medications?username=${username}`,
+          `https://medication-api-b2jz.onrender.com/medications?caretaker=${username}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
