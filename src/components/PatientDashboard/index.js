@@ -85,7 +85,7 @@ const PatientDashboard = () => {
 
     try {
       const res = await fetch(
-        "https://medication-api-b2jz.onrender.com/patient/update-medication",
+        "https://medication-api-b2jz.onrender.com/patient/update-medication-status",
         {
           method: "POST",
           headers: {
