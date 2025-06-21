@@ -3,7 +3,7 @@ import "./style.css";
 const Header = () => {
   const handleLogout = () => {
     window.location.href = "/login";
-    localStorage.remove("jwtToken");
+    localStorage.removeItem("jwtToken");
   };
 
   return (
