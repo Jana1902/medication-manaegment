@@ -8,9 +8,9 @@ const PatientDashboard = () => {
   const [refills, setRefills] = useState(0);
   const [username, setUsername] = useState("");
   const [medicationForm, setMedicationForm] = useState({
-    name: "",
+    id: "",
     status: "taken",
-    notes: ""
+    notes: "",
   });
   const [medications, setMedications] = useState([]);
 
@@ -76,25 +76,31 @@ const PatientDashboard = () => {
   const handleMedicationSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("jwtToken");
+    const payload = {
+      username,
+      medication_id: medicationForm.id,
+      status: medicationForm.status,
+      notes: medicationForm.notes,
+    };
 
     try {
       const res = await fetch(
-        "https://medication-api-b2jz.onrender.com/patient/update-medication-status",
+        "https://medication-api-b2jz.onrender.com/patient/update-medication",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ username, ...medicationForm }),
+          body: JSON.stringify(payload),
         }
       );
-      const result = await res.json();
+
       if (res.ok) {
-        alert("Medication status updated successfully");
-        setMedicationForm({ name: "", status: "taken", notes: "" });
+        alert("Medication updated successfully");
+        setMedicationForm({ id: "", status: "taken", notes: "" });
       } else {
-        alert(result.error || "Failed to update medication");
+        console.error("Failed to update medication");
       }
     } catch (err) {
       console.error("Server error", err);
@@ -114,34 +120,42 @@ const PatientDashboard = () => {
         <div className="stats-grid">
           <div className="stat-card large">
             <h3>Streak 🔥</h3>
-            <p><strong>{streak}</strong> days</p>
+            <p>
+              <strong>{streak}</strong> days
+            </p>
           </div>
           <div className="stat-card large">
             <h3>Today’s Status ✅</h3>
-            <p><strong>{todayStatus}</strong></p>
+            <p>
+              <strong>{todayStatus}</strong>
+            </p>
           </div>
           <div className="stat-card large">
             <h3>Next Dose ⏰</h3>
-            <p>At <strong>{nextDose}</strong></p>
+            <p>
+              At <strong>{nextDose}</strong>
+            </p>
           </div>
           <div className="stat-card large">
             <h3>Refills Needed 🧾</h3>
-            <p><strong>{refills}</strong> due</p>
+            <p>
+              <strong>{refills}</strong> due
+            </p>
           </div>
         </div>
 
         <div className="form-section">
-          <h3>Update Medication Status</h3>
+          <h3>Update Medication</h3>
           <form onSubmit={handleMedicationSubmit} className="medication-form">
             <select
-              name="name"
-              value={medicationForm.name}
+              name="id"
+              value={medicationForm.id}
               onChange={handleFormChange}
               required
             >
               <option value="">Select Medication</option>
               {medications.map((med) => (
-                <option key={med.id} value={med.name}>
+                <option key={med.id} value={med.id}>
                   {med.name}
                 </option>
               ))}
@@ -162,10 +176,10 @@ const PatientDashboard = () => {
               name="notes"
               value={medicationForm.notes}
               onChange={handleFormChange}
-              placeholder="Any notes (optional)"
+              placeholder="Optional notes..."
             />
 
-            <button type="submit">Update Status</button>
+            <button type="submit">Update Medication</button>
           </form>
         </div>
       </div>
