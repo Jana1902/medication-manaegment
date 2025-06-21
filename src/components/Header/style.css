@@ -1,0 +1,62 @@
+.app-header {
+  /* background-image: linear-gradient(to right, #4f77ee, #1e3c72, #28539d); */
+  background-color: #2a5298;
+  width: 100%;
+  padding: 10px 0;
+  color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  width: 80vw;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo-title {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  background-color: #278dcc;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.logo-text {
+  font-size: 24px;
+  font-weight: bold;
+  font-style: italic;
+  letter-spacing: 1px;
+}
+
+.app-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.logout-btn {
+  background-color: transparent;
+  color: white;
+  border: 1px solid white;
+  padding: 6px 14px;
+  border-radius: 4px;
+  width: fit-content;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.logout-btn:hover {
+  background-color: #c11b0f;
+  border-color: #b3b3b3;
+}

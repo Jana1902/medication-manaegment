@@ -1,0 +1,71 @@
+/* dashboard.css */
+
+.dashboard-container {
+  width: 100%;
+  padding: 2rem;
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  min-height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.dashboard-card {
+  width: 80vw;
+  background: #d8d8d8;
+  border-radius: 1.5rem;
+  padding: 2.0rem;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+}
+
+.dashboard-header h2 {
+  font-size: 2rem;
+  margin-bottom: 0.25rem;
+  color: #0b2163;
+  margin-top: 0;
+}
+
+.subtext {
+  color: #555;
+  font-size: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2rem;
+}
+
+.stat-card {
+  background: linear-gradient(135deg, #6dd5fa, #2980b9);
+  color: white;
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 140px;
+}
+
+.stat-card.large {
+  font-size: 1.1rem;
+}
+
+.stat-card h4 {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.stat-card p {
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+}
