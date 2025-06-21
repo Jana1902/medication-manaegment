@@ -4,11 +4,11 @@ import "./style.css";
 const PatientDashboard = () => {
   const [streak, setStreak] = useState(0);
   const [todayStatus, setTodayStatus] = useState("Not done");
-  const [nextDose, setNextDose] = useState("--:--");
-  const [refills, setRefills] = useState(0);
+  const [percentage, setPercentage] = useState(0);
   const [username, setUsername] = useState("");
+  const [userid, setUserid] = useState(null);
   const [medicationForm, setMedicationForm] = useState({
-    medicationName: "",
+    id: "",
     status: "taken",
     notes: "",
   });
@@ -22,13 +22,16 @@ const PatientDashboard = () => {
   };
 
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      const token = localStorage.getItem("jwtToken");
-      const username = localStorage.getItem("username");
-      setUsername(username);
+    const token = localStorage.getItem("jwtToken");
+    const username = localStorage.getItem("username");
+    const id = localStorage.getItem("userid");
+    setUsername(username);
+    setUserid(id);
+
+    const fetchStreak = async () => {
       try {
         const res = await fetch(
-          `https://medication-api-b2jz.onrender.com/patient-dashboard?username=${username}`,
+          `https://medication-api-b2jz.onrender.com/patient/${id}/streak`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -37,17 +40,46 @@ const PatientDashboard = () => {
         );
         const data = await res.json();
         setStreak(data.streak || 0);
-        setTodayStatus(data.todayStatus || "No data");
-        setNextDose(data.nextDose || "--:--");
-        setRefills(data.refills || 0);
       } catch (err) {
-        console.error("Failed to fetch dashboard data", err);
+        console.error("Error fetching streak", err);
+      }
+    };
+
+    const fetchTodayStatus = async () => {
+      try {
+        const res = await fetch(
+          `https://medication-api-b2jz.onrender.com/patient/${id}/today-status`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const data = await res.json();
+        setTodayStatus(data.status || "No data");
+      } catch (err) {
+        console.error("Error fetching today's status", err);
+      }
+    };
+
+    const fetchMonthlyPercentage = async () => {
+      try {
+        const res = await fetch(
+          `https://medication-api-b2jz.onrender.com/patient/${id}/monthly-percentage`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const data = await res.json();
+        setPercentage(data.percentage || 0);
+      } catch (err) {
+        console.error("Error fetching monthly percentage", err);
       }
     };
 
     const fetchMedications = async () => {
-      const token = localStorage.getItem("jwtToken");
-      const username = localStorage.getItem("username");
       try {
         const res = await fetch(
           `https://medication-api-b2jz.onrender.com/medications?caretaker=${username}`,
@@ -60,12 +92,16 @@ const PatientDashboard = () => {
         const data = await res.json();
         setMedications(data);
       } catch (err) {
-        console.error("Failed to fetch medications", err);
+        console.error("Error fetching medications", err);
       }
     };
 
-    fetchDashboardData();
-    fetchMedications();
+    if (id && token && username) {
+      fetchStreak();
+      fetchTodayStatus();
+      fetchMonthlyPercentage();
+      fetchMedications();
+    }
   }, []);
 
   const handleFormChange = (e) => {
@@ -76,13 +112,19 @@ const PatientDashboard = () => {
   const handleMedicationSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("jwtToken");
-
     const payload = {
       username,
-      medicationName: medicationForm.medicationName,
+      medicationName:
+        medications.find((med) => med.id === parseInt(medicationForm.id))
+          ?.name || "",
       status: medicationForm.status,
       notes: medicationForm.notes,
     };
+
+    if (!payload.medicationName || !payload.status) {
+      alert("Please select a medication and status.");
+      return;
+    }
 
     try {
       const res = await fetch(
@@ -99,14 +141,14 @@ const PatientDashboard = () => {
 
       if (res.ok) {
         alert("Medication status updated successfully");
-        setMedicationForm({ medicationName: "", status: "taken", notes: "" });
+        setMedicationForm({ id: "", status: "taken", notes: "" });
       } else {
-        const errRes = await res.json();
-        console.error("Failed to update medication:", errRes);
-        alert(errRes?.error || "Update failed");
+        const err = await res.json();
+        alert(err?.error || "Failed to update medication");
       }
     } catch (err) {
       console.error("Server error", err);
+      alert("Server error");
     }
   };
 
@@ -114,26 +156,30 @@ const PatientDashboard = () => {
     <div className="dashboard-container">
       <div className="dashboard-card">
         <div className="dashboard-header">
-          <h2>{getGreeting()}, {username} 👋</h2>
+          <h2>
+            {getGreeting()}, {username} 👋
+          </h2>
           <p className="subtext">Stay on track. Your health matters 💊</p>
         </div>
 
         <div className="stats-grid">
           <div className="stat-card large">
             <h3>Streak 🔥</h3>
-            <p><strong>{streak}</strong> days</p>
+            <p>
+              <strong>{streak}</strong> days
+            </p>
           </div>
           <div className="stat-card large">
             <h3>Today’s Status ✅</h3>
-            <p><strong>{todayStatus}</strong></p>
+            <p>
+              <strong>{todayStatus}</strong>
+            </p>
           </div>
           <div className="stat-card large">
-            <h3>Next Dose ⏰</h3>
-            <p>At <strong>{nextDose}</strong></p>
-          </div>
-          <div className="stat-card large">
-            <h3>Refills Needed 🧾</h3>
-            <p><strong>{refills}</strong> due</p>
+            <h3>Monthly % 📈</h3>
+            <p>
+              <strong>{percentage}%</strong> taken
+            </p>
           </div>
         </div>
 
@@ -141,14 +187,14 @@ const PatientDashboard = () => {
           <h3>Update Medication</h3>
           <form onSubmit={handleMedicationSubmit} className="medication-form">
             <select
-              name="medicationName"
-              value={medicationForm.medicationName}
+              name="id"
+              value={medicationForm.id}
               onChange={handleFormChange}
               required
             >
               <option value="">Select Medication</option>
               {medications.map((med) => (
-                <option key={med.id} value={med.name}>
+                <option key={med.id} value={med.id}>
                   {med.name}
                 </option>
               ))}
