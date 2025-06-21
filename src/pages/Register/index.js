@@ -8,6 +8,7 @@ const Register = () => {
   const [password2, setPassword2] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [personType, setPersonType] = useState("patient");
+  const [code, setCode] = useState(""); // ✅ New state
 
   const [isError, setIsError] = useState(false);
   const [errType, setErrType] = useState("");
@@ -20,7 +21,7 @@ const Register = () => {
     event.preventDefault();
     setServerError("");
 
-    if (!username || !password1 || !password2) {
+    if (!username || !password1 || !password2 || (personType === "caretaker" && !code)) {
       setIsError(true);
       setErrType("empty");
       return;
@@ -57,30 +58,23 @@ const Register = () => {
       username,
       password: password1,
       type: personType,
-      code: personType === "caretaker" ? "CARETAKER980" : "",
-    };
-
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(userDetails),
+      code: personType === "caretaker" ? code : "", // ✅ Use entered code
     };
 
     try {
-      const res = await fetch(
-        "https://medication-api-b2jz.onrender.com/register",
-        options
-      );
-      console.log(res);
+      const res = await fetch("https://medication-api-b2jz.onrender.com/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userDetails),
+      });
+
       const text = await res.text();
       if (res.ok) return true;
       setServerError(text || "Registration failed");
       return false;
     } catch (err) {
       console.error(err);
-      setServerError(err);
+      setServerError("Server error. Please try again later.");
       return false;
     }
   };
@@ -90,16 +84,10 @@ const Register = () => {
       switch (errType) {
         case "empty":
           return (
-            <p className="error-msg">
-              *Username or Password should not be empty
-            </p>
+            <p className="error-msg">*Please fill in all required fields</p>
           );
         case "length":
-          return (
-            <p className="error-msg">
-              *Password must contain at least 8 characters
-            </p>
-          );
+          return <p className="error-msg">*Password must contain at least 8 characters</p>;
         case "match":
           return <p className="error-msg">*Passwords do not match</p>;
         default:
@@ -187,6 +175,19 @@ const Register = () => {
               <label htmlFor="caretakerRadio">Caretaker</label>
             </div>
           </div>
+
+          {/* 👇 Conditionally render Caretaker Code */}
+          {personType === "caretaker" && (
+            <>
+              <label htmlFor="code">Caretaker Code</label>
+              <input
+                type="text"
+                id="code"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+              />
+            </>
+          )}
 
           <button type="submit" disabled={loading}>
             {loading ? "Registering..." : "Register"}
