@@ -80,7 +80,7 @@ const Register = () => {
       return false;
     } catch (err) {
       console.error(err);
-      setServerError("Server error. Please try again later.");
+      setServerError(err);
       return false;
     }
   };
