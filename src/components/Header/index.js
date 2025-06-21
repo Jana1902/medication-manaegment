@@ -2,8 +2,9 @@ import Cookies from "js-cookie";
 import "./style.css";
 
 const Header = () => {
-  const handleLogout = () => {
-    window.location.href = "/login";
+  const handleLogout = props => {
+    const {history} = props
+    history.replace('/login')
     localStorage.removeItem("jwtToken");
     Cookies.remove('jwtToken')
   };
